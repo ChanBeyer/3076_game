@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2020 by anonymous (http://jsbin.com/muwulokapu/1/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+<html>
+	<head>
+		<!-- Set-up and Title -->
+		<meta charset="utf-8">
+		<title> 2048 </title>
+		
+		<!-- CSS Style Sheet -->
+		<link rel="stylesheet" type="text/css" href="mystyle2.css">
+		
+		<!-- JavaScript Code -->
+		<script src="myscript2.js"></script>
+	<style id="jsbin-css">
+html, body {
+	margin: 0;
+	padding: 10px;
+	background: #faf8ef;
+	color: #ffffff;
+	font-family: "Helvetica Neue", Arial, sans-serif;
+	font-size: 36px;
+	font-weight: bolder;
+}
+
+.grid-container {
+	position: absolute;
+	z-index: 1;
+}
+
+.grid-row {
+	margin-bottom: 15px;
+}
+
+.grid-row:last-child {
+	margin-bottom: 0;
+}
+
+.grid-row:after {
+	content: "";
+	display: block;
+	clear: both;
+}
+
+.grid-cell {
+	width: 106.25px;
+	height: 106.25px;
+	margin-right: 15px;
+	float: left;
+	border-radius: 3px;
+	text-align: center;
+	background: rgba(238, 228, 218, 0.35);
+}
+
+.grid-cell:last-child {
+	margin-right: 0;
+}
+
+.game-container {
+	margin-top: 40px;
+	position: relative;
+	padding: 15px;
+	cursor: default;
+	background: #bbada0;
+	border-radius: 6px;
+	width: 500px;
+	height: 500px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+
+</style>
+</head>
+	
+	<body onload="runGame()" onkeydown="arrowPressed(event)">
+		<!-- The following sets up the game grid. Note that we are using multiple divs for this: for the game background, for the grid background, for the grid rows (four total), and for the grid cells (16 total). The cells are id'd by their row and column numbers. For example, the cell in the bottom right corner will be r3c3 because it is in the third row and third column (remember, zero-based indexing!) -->
+		<div class="game-container">
+			<div class="grid-container">
+		        <!-- First Row (row 0) -->
+				<div class="grid-row">
+		          <div class="grid-cell" id = "r0c0"></div>
+		          <div class="grid-cell" id = "r0c1"></div>
+		          <div class="grid-cell" id = "r0c2"></div>
+		          <div class="grid-cell" id = "r0c3"></div>
+		        </div>
+				
+				<!-- Second Row (row 1) -->
+		        <div class="grid-row">
+		          <div class="grid-cell" id = "r1c0"></div>
+		          <div class="grid-cell" id = "r1c1"></div>
+		          <div class="grid-cell" id = "r1c2"></div>
+		          <div class="grid-cell" id = "r1c3"></div>
+		        </div>
+				
+				<!-- Third Row (row 2) -->
+		        <div class="grid-row">
+		          <div class="grid-cell" id = "r2c0"></div>
+		          <div class="grid-cell" id = "r2c1"></div>
+		          <div class="grid-cell" id = "r2c2"></div>
+		          <div class="grid-cell" id = "r2c3"></div>
+		        </div>
+				
+				<!-- Fourth Row (row 3) -->
+		        <div class="grid-row">
+		          <div class="grid-cell" id = "r3c0"></div>
+		          <div class="grid-cell" id = "r3c1"></div>
+		          <div class="grid-cell" id = "r3c2"></div>
+		          <div class="grid-cell" id = "r3c3"></div>
+		        </div>
+	      	</div>
+	     </div>
+	<script id="jsbin-javascript">
+//Chandler Beyer
+// initial tile values on the board
+var boardValue = [[0,0,0,0],[0,0,0,3],[0,3,3,0],[0,0,0,0]];
+boardSize = 4;
+
+// this runs when the page is opened
+function runGame(){
+	printBoard();
+	colorBoard();
+}
+
+// this syncs the tile values stored in the 2d array ( board[i][j] )
+// with the tile values that appear on the screen ( innerHTML )
+function printBoard(){
+	for(var i = 0; i < 4; i++){			// loop over each row
+		for(var j = 0; j < 4; j++){		// loop over each column
+			var boardID = "r"+i+"c"+j;	// get id based on row and column
+			if(boardValue[i][j]!==0){
+				// display tile value if not zero
+				document.getElementById(boardID).innerHTML = boardValue[i][j];
+			} else {
+				// display nothing if zero
+				document.getElementById(boardID).innerHTML = "";
+			}
+		}
+	}
+}
+
+// this colors each tile based on their current tile value
+function colorBoard(){
+	for(var i = 0; i < 4; i++){			// loop over each row
+		for(var j = 0; j < 4; j++){		// loop over each column
+			var boardID = "r"+i+"c"+j;	// get id based on row and column
+			
+			// assign colors based on current tile value
+			if(boardValue[i][j] == 3){
+				document.getElementById(boardID).style.background = "#FF0000";
+			}
+			else if(boardValue[i][j] == 6){
+				document.getElementById(boardID).style.background = "#FF9933";
+			}
+			else if(boardValue[i][j] == 12){
+				document.getElementById(boardID).style.background = "#FFFF66";
+			}
+			else if(boardValue[i][j] == 24){
+				document.getElementById(boardID).style.background = "#993333";
+			}
+			else if(boardValue[i][j] == 48){
+				document.getElementById(boardID).style.background = "#00CC66";
+			}
+			else if(boardValue[i][j] == 96){
+				document.getElementById(boardID).style.background = "#00FFFF";
+			}
+			else if(boardValue[i][j] == 384){
+				document.getElementById(boardID).style.background = "#0000FF";
+			}
+			else if(boardValue[i][j] == 768){
+				document.getElementById(boardID).style.background = "#9933FF";
+			}
+			else if(boardValue[i][j] == 1536){
+				document.getElementById(boardID).style.background = "#FFCCFF";
+			}
+			else if(boardValue[i][j] == 3072){
+				document.getElementById(boardID).style.background = "#99CCFF";
+			}
+			else if(boardValue[i][j] == 6144){
+				document.getElementById(boardID).style.background = "#993333";
+			}
+            else {
+              document.getElementById(boardID).style.background = "#FF00FF";
+            }
+		}
+	}
+}
+
+// this responds when the user presses the arrow keys
+//	- this prints out the key code to the console
+//	- update this so that the tiles move when the arrow keys are pressed!
+function canMove(row, col, direction) {
+  //console.log("testing if i can move");
+	if (direction === 'right') {
+    //move right
+     // console.log("testing if i can more right");
+		if (boardValue[row][col] === 0){ // if there is nothing in your tile
+			return false;
+ }
+      
+		else if(col === 3){
+			return false;
+ }
+      else if(boardValue[row][col +1] === 0){ //if spot next to tile is empty
+       // console.log("i can move right");
+			return true;
+ }
+     
+		else if (boardValue[row][col] != boardValue[row][col+1]) { //different number values
+			return false;
+ }
+		
+      
+		else if (boardValue[row][col] === boardValue[row][col+1]) {  //if space is the same value
+			return true;
+    }
+}
+  
+  
+//to move left
+
+	if(direction === 'left') {
+		if (boardValue[row][col] === 0) {
+			return false;
+  }         
+		
+		else if(col === 0) {
+			return false;
+  }                 
+      		else if(boardValue[row][col - 1] === 0){ // if neighbor is empty
+			return true;
+  }
+      
+		// if on edge, won't go off
+		else if (boardValue[row][col] != boardValue[row][col-1]){ //not the same neighbor value
+			return false;
+  }  
+			
+		else if (boardValue[row][col] === boardValue[row][col-1]){
+			return true;
+  }
+          
+}		
+		
+	if(direction === 'up') {
+		if (boardValue[row][col] ===0){ //if tile itself is blank
+			return false;
+ }
+		
+		else if(row === 0) { //if touching edge
+			return false;
+ }
+		
+      else if(boardValue[row-1][col] === 0){ //if neighbor is empty
+			return true;
+  }   
+		
+		else if (boardValue[row][col] != boardValue[row-1][col]){  //neighbor value is NOT the same
+			return false;
+  }
+		
+		else if (boardValue[row][col] === boardValue[row-1][col]) { // if neighbor above= same value
+			return true;
+ }        		
+  }
+
+
+	if(direction === 'down'){
+		if (boardValue[row][col]===0) { //if it's a tile with a value
+			return false;
+        }
+		else if(row === 3){ //if on edge
+			return false;
+        }  
+        else if(boardValue[row + 1][col] === 0){ //if neighbor is empty
+			return true;
+        } 
+		
+		else if (boardValue[row][col] != boardValue[row+1][col]){  //if it's not the same value
+			return false;
+        }  
+      
+		else if (boardValue[row][col] === boardValue[row+1][col]) { //if it's the same value
+			return true;
+        } 
+   		
+}
+}
+
+
+
+function Move(row, col, direction){
+  //console.log(canMove(row, col, direction));
+	if (canMove(row, col, direction)===true) {
+      
+		if (direction === 'right') {
+          if (boardValue[row][col + 1]===boardValue [row][col]){
+            boardValue[row][col+1]=boardValue[row][col]*2;
+            boardValue[row][col]=0; }
+            else {
+              boardValue[row][col+1]=boardValue[row][col];
+              boardValue[row][col] = 0;
+          }
+            
+          
+        }		
+		else if (direction === 'left'){
+			  if (boardValue[row][col - 1]===boardValue [row][col]){
+            boardValue[row][col-1]=boardValue[row][col]*2;
+            boardValue[row][col]=0; }
+            else {
+              boardValue[row][col-1]=boardValue[row][col];
+              boardValue[row][col] = 0;}
+          }
+            
+		else if (direction === 'up'){
+			  if (boardValue[row-1][col]===boardValue [row][col]){
+            boardValue[row-1][col]=boardValue[row][col]*2;
+            boardValue[row][col]=0; }
+            else {
+              boardValue[row-1][col]=boardValue[row][col];
+              boardValue[row][col] = 0;}
+          }
+            
+		else if (direction === 'down') {
+		  if (boardValue[row+1][col]===boardValue [row][col]){
+            boardValue[row+1][col]=boardValue[row][col]*2;
+            boardValue[row][col]=0; }
+            else {
+              boardValue[row+1][col]=boardValue[row][col];
+              boardValue[row][col] = 0;}
+          }
+            
+}
+}
+
+// responds when user presses an arrow
+function arrowPressed(e){
+//right
+  console.log(e.keyCode);
+  if (e.keyCode === 39) {
+    for (var j=3; j>=0; j--){
+	  for (var i=0; i<boardSize; i++){
+        Move(i, j, 'right');
+      }    
+    }
+     //printBoard();
+  }
+  
+//left
+  else if (e.keyCode === 37) {
+    for (var j=0; j<boardSize; j++) {
+      for (var i=0; i<boardSize; i++){
+	    Move(i, j, 'left');
+      }
+    } 
+  //printBoard();
+  }  
+      
+//up			
+  else if (e.keyCode=== 38) {
+	for (var i=0; i<boardSize; i++){
+	  for (var j=0; j<boardSize; j++){
+        Move(i, j, 'up');
+      }   
+    }
+  //printBoard();
+   }
+			
+//down 
+  else if (e.keyCode===40) {
+	for (var i=3; i>=0; i--) {
+	  for (var j=0; j<boardSize; j++){
+	    Move(i, j, 'down');
+      } 
+     }	
+  //printBoard();
+  }
+   a=Math.floor((Math.random()*3)+1);
+          b=Math.floor((Math.random()*3)+1);
+          if (boardValue[a][b]===0)
+            {boardValue[a][b]=3;}
+  printBoard();
+  colorBoard();
+}
+
+</script>
+</body>
+</html>
+
